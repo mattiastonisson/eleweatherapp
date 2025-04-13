@@ -1,0 +1,31 @@
+name: "java-weather-electricity-price-test-app"
+
+services:
+    db:
+        image: postgres:latest
+        ports:
+            - "5433:5432"
+        environment:
+            POSTGRES_DB: weather_electricity_price_app
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: postgres
+        healthcheck:
+          test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+          interval: 5s
+          timeout: 5s
+          retries: 5
+
+    app:
+        build:
+            context: .
+        ports:
+            - "3001:3001"
+        depends_on:
+            db:
+              condition: service_healthy
+
+        environment:
+            DATABASE_URL: jdbc:postgresql://db:5432/weather_electricity_price_app
+            DATABASE_USERNAME: postgres
+            DATABASE_PASSWORD: postgres
+            DATABASE_SCHEMA: eleweather

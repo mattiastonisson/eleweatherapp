@@ -1,0 +1,57 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: Mattias
+      changes:
+        - createTable:
+            schemaName: ${db.schema}
+            tableName: electricity_price
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: price
+                  type: decimal(6,2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: datetime
+                  type: datetime
+                  constraints:
+                    nullable: false
+        - addUniqueConstraint:
+            schemaName: ${db.schema}
+            tableName: electricity_price
+            columnNames: datetime
+            constraintName: unique_electricity_price_datetime
+        - createTable:
+            schemaName: ${db.schema}
+            tableName: weather_data
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: average_temperature
+                  type: decimal(4,1)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: date
+                  type: date
+                  constraints:
+                    nullable: false
+        - addUniqueConstraint:
+            schemaName: ${db.schema}
+            tableName: weather_data
+            columnNames: date
+            constraintName: unique_weather_data_date

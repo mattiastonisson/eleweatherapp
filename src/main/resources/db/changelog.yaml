@@ -1,0 +1,3 @@
+databaseChangeLog:
+  - include:
+      file: classpath:db/migrations/001-schema-setup.yaml

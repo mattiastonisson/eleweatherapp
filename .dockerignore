@@ -1,0 +1,6 @@
+.gradle
+build
+!build/libs/app.jar
+out
+.idea
+*.log

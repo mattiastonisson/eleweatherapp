@@ -1,0 +1,42 @@
+server:
+  port: 3001
+
+spring:
+  application:
+    name: ele-weather-app
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5433/weather_electricity_price_app?currentSchema=eleweather}
+    username: ${DATABASE_USERNAME:postgres}
+    password: ${DATABASE_PASSWORD:postgres}
+  jpa:
+    properties:
+      hibernate:
+        # for schema validation through hibernate
+        default_schema: ${DATABASE_SCHEMA:eleweather}
+    hibernate:
+      ddl-auto: validate
+  liquibase:
+    enabled: true
+    # for the pre-liquibase script creating the schema
+    liquibase-schema: ${DATABASE_SCHEMA:eleweather}
+    parameters:
+      # for the first migration script creating the tables
+      db.schema: ${DATABASE_SCHEMA:eleweather}
+    change-log: classpath:db/changelog.yaml
+  servlet:
+    multipart:
+      enabled: true
+      file-size-threshold: 2MB
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
+meteo:
+  api:
+    url: ${METEO_API_URL:https://archive-api.open-meteo.com/v1/archive}
+    longitude: ${METEO_API_LONGITUDE:25.0}
+    latitude: ${METEO_API_LATITUDE:58.0}
+    timezone: ${METEO_API_TIMEZONE:Europe/Tallinn}
