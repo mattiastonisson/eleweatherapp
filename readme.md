@@ -1,4 +1,4 @@
-# Electricity price & temperature statistics EE2024
+# Electricity price & temperature statistics (EE2024)
 
 ## Dependency version information
 - Spring Boot: 3.4.4
@@ -18,6 +18,9 @@
 - **Electricity Pricing Data**: Parses uploaded electricity price data (CSV) and stores it in a PostgreSQL database.
 - **Integrated View**: Combines temperature and electricity price data and makes it available through a REST API.
 - **Swagger UI**: Provides an interactive interface to explore and test API endpoints.
+- **Logging**: Uses the standard Slf4j/Logback logging.
+- **Observability**: Uses a minimal standard Actuator setup for observability and health-checks.
+- **Integration tests**: Some basic integration tests can be found [here](src/test/java/com/example/eleweatherapp).
 
 ---
 
@@ -46,6 +49,12 @@ Rename the [example application config file (example-application.yml)](src/main/
 #### [Optional] 1.5 Adjust configs (see [docker-compose.yml](docker-compose.yml) and [application.yml](src/main/resources/application.yml))
 
 ## Running the application
+
+### Running the tests
+Execute the following command:
+```
+./gradlew test
+```
 
 ### Natively/locally
 Start your PostgreSQL service at the location you specified in the config above.
