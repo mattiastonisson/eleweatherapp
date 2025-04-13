@@ -4,6 +4,8 @@ import com.example.eleweatherapp.dtos.WeatherData.MeteoApiResponseDto;
 import com.example.eleweatherapp.models.WeatherData;
 import com.example.eleweatherapp.repositories.WeatherDataRepository;
 import com.example.eleweatherapp.utils.InclusiveDateRange;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -14,6 +16,7 @@ import java.util.*;
 
 @Service
 public class WeatherDataService {
+    private final Logger logger = LoggerFactory.getLogger(WeatherDataService.class);
     private final WeatherDataRepository weatherDataRepository;
     private final MeteoApiService meteoApiService;
 
@@ -24,21 +27,21 @@ public class WeatherDataService {
 
     public void fetchAndStoreWeatherData (List<InclusiveDateRange> continuousPriceDataRanges) {
         if (continuousPriceDataRanges.isEmpty()) {
-            System.out.println("Skipping fetching weather data as we have no electricity price data!");
+            logger.info("Skipping fetching weather data as we have no electricity price data!");
             return;
         }
 
         for (InclusiveDateRange range : continuousPriceDataRanges) {
             if (this.weatherDataRepository.dataExistsForDateRange(range)) {
-                System.out.println("Skipping fetching weather data for " + range.toHRString() + " as we already have it!");
+                logger.info("Skipping fetching weather data for {} as we already have it!", range.toHRString());
                 continue;
             }
 
-            System.out.println("Fetching weather data for " + range.toHRString());
+            logger.info("Fetching weather data for {}", range.toHRString());
             MeteoApiResponseDto meteoResponse = meteoApiService.fetchData(range.startDate(), range.endDate());
             storeWeatherDataRange(meteoResponse, range);
 
-            System.out.println("Weather data for " + range.toHRString() + " fetched and stored successfully.");
+            logger.info("Weather data for {} fetched and stored successfully.", range.toHRString());
         }
     }
 
@@ -51,7 +54,7 @@ public class WeatherDataService {
             return;
         }
 
-        System.out.println("Processing meteo data for " + range.toHRString());
+        logger.info("Processing meteo data for {}", range.toHRString());
         Map<LocalDate, List<BigDecimal>> groupedByDate = new HashMap<>();
         List<String> hourlyTimeData = meteoResponse.hourly().time();
         List<BigDecimal> hourlyTemperatureData = meteoResponse.hourly().temperature_2m();
@@ -81,22 +84,19 @@ public class WeatherDataService {
         String emptyResponseMessage = "No data returned from Meteo for period " + range.toHRString();
 
         if (meteoResponse == null || meteoResponse.hourly() == null) {
-            System.out.println(emptyResponseMessage);
+            logger.debug(emptyResponseMessage);
             return false;
         }
 
         List<String> hourlyTimeData = meteoResponse.hourly().time();
         List<BigDecimal> hourlyTemperatureData = meteoResponse.hourly().temperature_2m();
         if (hourlyTimeData == null || hourlyTemperatureData == null) {
-            System.out.println(emptyResponseMessage);
+            logger.debug(emptyResponseMessage);
             return false;
         }
 
         if (hourlyTemperatureData.size() != hourlyTimeData.size()) {
-            System.out.println(
-                "Error in Meteo response for period " + range.toHRString()
-                    + " | different number of time and temperature data points returned!"
-            );
+            logger.debug("Error in Meteo response for period {} | different number of time and temperature data points returned!", range.toHRString());
             return false;
         }
 

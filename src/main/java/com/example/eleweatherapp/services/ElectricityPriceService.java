@@ -5,6 +5,8 @@ import com.example.eleweatherapp.dtos.DailyAverageElectricityPriceDto;
 import com.example.eleweatherapp.models.ElectricityPrice;
 import com.example.eleweatherapp.repositories.ElectricityPriceRepository;
 import com.example.eleweatherapp.utils.InclusiveDateRange;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -16,6 +18,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class ElectricityPriceService {
+    private final Logger logger = LoggerFactory.getLogger(ElectricityPriceService.class);
     private final ElectricityPriceRepository electricityPriceRepository;
 
     public ElectricityPriceService (ElectricityPriceRepository electricityPriceRepository) {
@@ -53,6 +56,7 @@ public class ElectricityPriceService {
     public List<InclusiveDateRange> getContinuousElectricityPriceDataRanges() {
         List<Date> sqlDates = electricityPriceRepository.findDistinctDates();
         if (sqlDates.isEmpty()) {
+            logger.info("No electricity price data found!");
             return new ArrayList<>();
         }
 
@@ -91,6 +95,7 @@ public class ElectricityPriceService {
 
         periods.add(new InclusiveDateRange(currentStartDate, currentEndDate));
 
+        logger.info("Continuous electricity price data found: {}", periods.stream().map(InclusiveDateRange::toHRString).toList());
         return periods;
     }
 

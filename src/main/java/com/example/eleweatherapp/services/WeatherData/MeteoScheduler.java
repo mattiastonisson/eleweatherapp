@@ -2,6 +2,8 @@ package com.example.eleweatherapp.services.WeatherData;
 
 import com.example.eleweatherapp.services.ElectricityPriceService;
 import com.example.eleweatherapp.utils.InclusiveDateRange;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -9,6 +11,7 @@ import java.util.List;
 
 @Component
 public class MeteoScheduler {
+    private final Logger logger = LoggerFactory.getLogger(MeteoScheduler.class);
     private final ElectricityPriceService electricityPriceService;
     private final WeatherDataService weatherDataService;
 
@@ -19,9 +22,9 @@ public class MeteoScheduler {
 
     @Scheduled(cron = "0 */5 * * * *")
     public void fetchWeatherData () {
-        System.out.println("Starting weather data fetch!");
+        logger.info("Starting weather data fetch!");
         List<InclusiveDateRange> continuousPriceDataRanges = electricityPriceService.getContinuousElectricityPriceDataRanges();
         weatherDataService.fetchAndStoreWeatherData(continuousPriceDataRanges);
-        System.out.println("Weather data fetch finished!");
+        logger.info("Weather data fetch finished!");
     }
 }

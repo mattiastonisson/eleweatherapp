@@ -40,3 +40,24 @@ meteo:
     longitude: ${METEO_API_LONGITUDE:25.0}
     latitude: ${METEO_API_LATITUDE:58.0}
     timezone: ${METEO_API_TIMEZONE:Europe/Tallinn}
+
+management:
+  health:
+    db:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: health, info, metrics
+  endpoint:
+    health:
+      show-details: always
+  info:
+    env:
+      enabled: true
+
+info:
+  app:
+    name: EleWeatherApp
+    description: Electricity price & weather data _statistics_ API
+    version: 0.1.0
